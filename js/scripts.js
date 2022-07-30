@@ -20,8 +20,29 @@ let pokemonList = [
         types: [
             'fire'
         ]
-    }
+    },
+
+    {
+        name: 'Blastoise'
+        height: '1.7'
+        types: [
+            'water'
+        ]
+    },
 ];
 
-//created 3 pokemon with objects in my pokemonList array (name, height and type). 
+//this loop iterates over each of my pokemonList and writes their names and heights
+
+for (let i = 0; i < pokemonList.length; i++) {
+
+    //writes special text for pokemons with a height over 1
+    if (pokemonList[i].height > 1) {
+        document.write('<p>' + pokemonList[i].name + ' (height: ' + pokemonList[i].height + ') - Wow, that is a big pokemon!')
+        //writes special text for pokemons with a height less than 1 
+    } else if (pokemonList[i].height < 1) {
+        document.write('<p>' + pokemonList[i].name + ' (height: ' + pokemonList[i].height + ') - This is a tiny size pokemon!')
+    }
+}
+
+
 
