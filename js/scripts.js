@@ -1,79 +1,62 @@
+// create a new variable named pokemonRepository and assign the IIFE to it 
 let pokemonRepository = (function () {
-let pokemonList = [
-    {
-        name: 'Bulbasaur',
-        height: 0.7,
-        types: [
-            'grass'
-            'poison'
-        ]
-    },
-    {
-        name: 'Squirtle',
-        height: 0.5,
-        types: [
-            'water'
-        ]
-    },
-    {
-        name: 'Charmander',
-        height: '0.6',
-        types: [
-            'fire'
-        ]
-    },
+    // define a list of pokemon in the array pokemonList
+    let pokemonList = [
+        { name: 'Bulbasaur', height: 0.7, types: ['grass', 'poison'] },
+        { name: 'Squirtle', height: 0.5, types: ['water'] },
+        { name: 'Charmander', height: 0.6, types: ['fire'] },
+        { name: 'Blastoise', height: 1.7, types: ['water'] },
+    ];
 
-    {
-        name: 'Blastoise'
-        height: '1.7'
-        types: [
-            'water'
-        ]
-    },
-];
-
-//this loop iterates over each of my pokemonList and writes their names and heights
-//keeping this 'for' loop here for future reference 
-
-// for (let i = 0; i < pokemonList.length; i++) {
-//writes special text for pokemons with a height over 1
-
-//if (pokemonList[i].height > 1) {
-//document.write('<p>' + pokemonList[i].name + ' (height: ' + pokemonList[i].height + ') - Wow, that is a big pokemon!')
-
-//writes special text for pokemons with a height less than 1 
-
-//} else if (pokemonList[i].height < 1) {
-//document.write('<p>' + pokemonList[i].name + ' (height: ' + pokemonList[i].height + ') - This is a tiny size pokemon!')
-//}
-//}
-
-
-//'getAll' and 'add' function
-
-function getAll() {
-    return pokemonList;
-}
-
-function add(pokemon) {
-    pokemonList.push(pokemon);
-}
-
-return {
-    getAll: getAll,
-    add: add
-}
-})();
-
-//create forEach function that iterates for Pokemons name and height
-
-let pokemonList = pokemonRepository.getAll();
-
-pokemonList.forEach(function(pokemon) {
-    if (pokemon.height > 1) {
-        document.write('<p>' + pokemon.name + ', height: ' + pokemon.height + ' - Wow, that is a big pokemon!' + '</p>')
-    } else {
-        document.write('<p>' + pokemon.name + ', height: ' + pokemon.height + ' - This is a tiny size pokemon!' + '</p>')
+    // define separate function getAll()
+    function getAll() {
+        return pokemonList;
     }
 
-});
+    // define separate function add()
+    function add(pokemon) {
+        if (typeof pokemon === 'object' && 'name' in pokemon) {
+            pokemonList.push(pokemon);
+        }
+    }
+
+    // define separate function addListItem()
+    function addListItem(pokemon) {
+        let pokemonList = document.querySelector('.pokemon-list');
+
+        let listItem = document.createElement('li');
+
+        let button = document.createElement('button');
+        // change the button text to the respective pokemon name 
+        button.innerText = pokemon.name
+        // add the class 'button-class' to the button 
+        button.classList.add('button-class');
+
+        // append the button to the list item and then the list item to the list
+        listItem.appendChild(button);
+        pokemonList.appendChild(listItem);
+
+        // add an event handler that calls the function showDetails(pokemon)
+        button.addEventListener('click', function (event) {
+            showDetails(pokemon)
+        }}
+}
+
+// define separate function showDetails() that prints the received pokemon object to the console
+function showDetails(pokemon) {
+    console.log(pokemon);
+}
+
+// return object with the new public functions assigned as keys 
+return {
+    getAll: getAll,
+    add: add,
+    addListItem: addListItem,
+    showDetails: showDetails
+}
+}) ()
+
+// forEach loop to iterate over each pokemon in pokemonList
+pokemonRepository.getAll().forEach(function (pokemon) {
+    pokemonRepository.addListItem(pokemon);
+})
