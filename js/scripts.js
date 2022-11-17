@@ -1,62 +1,103 @@
-// create a new variable named pokemonRepository and assign the IIFE to it 
+//create a new variable pokemonRepository and assign the IIFE to it
 let pokemonRepository = (function () {
-    // define a list of pokemon in the array pokemonList
-    let pokemonList = [
-        { name: 'Bulbasaur', height: 0.7, types: ['grass', 'poison'] },
-        { name: 'Squirtle', height: 0.5, types: ['water'] },
-        { name: 'Charmander', height: 0.6, types: ['fire'] },
-        { name: 'Blastoise', height: 1.7, types: ['water'] },
-    ];
+    // define an empty list of pokemon in the array pokemonList and the URL for the API in apiUrl
+    let pokemonList = [];
+    let apiUrl = 'https://pokeapi.co/api/v2/pokemon/?limit=150';
 
-    // define separate function getAll()
+    // define a separate function getAll()
     function getAll() {
         return pokemonList;
     }
 
-    // define separate function add()
-    function add(pokemon) {
-        if (typeof pokemon === 'object' && 'name' in pokemon) {
-            pokemonList.push(pokemon);
-        }
+    // define a separate function add(item)
+    function add(item) {
+        // check if the item to add is of the type 'object'
+        if (typeof item !=='object') {
+        // check if item keys are equal to the specific keys expected
+    } else if (!('name' in item) || !('detailsUrl' in item)) {
+        alert ('New pokemon must be entered with item keys name and detailsUrl');
+        // else add item to pokemonList
+    } else {
+        pokemonList.push(item);
     }
 
     // define separate function addListItem()
     function addListItem(pokemon) {
-        let pokemonList = document.querySelector('.pokemon-list');
-
+        // assign the overall list of pokemon to a new variable 
+        let listContainer = document.querySelector('.pokemon-list');
+        // create a new list entry and button for the pokemon
         let listItem = document.createElement('li');
-
         let button = document.createElement('button');
-        // change the button text to the respective pokemon name 
-        button.innerText = pokemon.name
-        // add the class 'button-class' to the button 
-        button.classList.add('button-class');
-
-        // append the button to the list item and then the list item to the list
+        // change the button text to the respective pokemon name
+        button.innerText = pokemon.name;
+        // add the class 'list-button' to the button
+        button.classList.add('list-button');
+        // append the button to the list item, and then the list item to the list
         listItem.appendChild(button);
-        pokemonList.appendChild(listItem);
+        listContainer.appendChild(listItem);
+        // add an event handler that calls the function ShowDetails(pokemon)
+        button.addEventListener('click', function () {
+            showDetails(pokemon);
+        });
+    }
 
-        // add an event handler that calls the function showDetails(pokemon)
-        button.addEventListener('click', function (event) {
-            showDetails(pokemon)
-        }}
-}
+    // define a separate function loadList() that fetches the list of pokemon from the pokeapi
+    function loadList() {
+        return fetch(apiUrl).then(function (response) {
+            return response.json(); // return a promise with the json() function
+        }).then(function (json) {
+            // for each result from the json fetch, the result and or pokemon is added to the pokemonList with the already implemented add function
+            json.results.forEach(function (item) {
+                let pokemon = {
+                    name: item.name, 
+                    detailsUrl: item.url
+                };
+                add(pokemon);
+            });
+        }).catch(function(e) {
+            console.error(e); 
+        })
+        }
+    }
 
-// define separate function showDetails() that prints the received pokemon object to the console
-function showDetails(pokemon) {
-    console.log(pokemon);
-}
+    // define a seprate function loadDetails() that loads details for the selected pokemon
+    function loadDetails(item) {
+        let url = item.detailsUrl;
+        return fetch(url).then(function (response) {
+            return response.json();
+        }).then(function (details) {
+            // add the details to the item
+            item.imageUrl = details.sprites.front_default;
+            item.height = details.height;
+            item.types = details.types;
+        }).catch(function (e) {
+            console.error(e);
+        });
 
-// return object with the new public functions assigned as keys 
-return {
-    getAll: getAll,
-    add: add,
-    addListItem: addListItem,
-    showDetails: showDetails
-}
-}) ()
+    }
 
-// forEach loop to iterate over each pokemon in pokemonList
-pokemonRepository.getAll().forEach(function (pokemon) {
-    pokemonRepository.addListItem(pokemon);
-})
+    // define separate function showDetails() that prints the received pokemon details to the console
+    function showDetails(pokemon) {
+        console.log(pokemon);
+        loadDetails(pokemon).then(function() {
+            console.log(pokemon);
+        });
+    }
+
+    // return object with the new public functions assigned as keys 
+    return {
+        getAll: getAll,
+        add: add,
+        addListItem: addListItem,
+        loadList: loadList,
+        loadDetails: loadDetails,
+        showDetails: showDetails
+    };
+})();
+
+pokemonRepository.loadList().then(function() {
+    // data is now loaded
+    pokemonRepository.getAll().forEach(function(pokemon) {
+        pokemonRepository.addListItem(pokemon);
+    });
+});
